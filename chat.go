@@ -8,16 +8,17 @@ import (
 )
 
 const (
-	DEFAULT_MESSAGE_USERNAME     = ""
-	DEFAULT_MESSAGE_ASUSER       = false
-	DEFAULT_MESSAGE_PARSE        = ""
-	DEFAULT_MESSAGE_LINK_NAMES   = 0
-	DEFAULT_MESSAGE_UNFURL_LINKS = false
-	DEFAULT_MESSAGE_UNFURL_MEDIA = true
-	DEFAULT_MESSAGE_ICON_URL     = ""
-	DEFAULT_MESSAGE_ICON_EMOJI   = ""
-	DEFAULT_MESSAGE_MARKDOWN     = true
-	DEFAULT_MESSAGE_ESCAPE_TEXT  = true
+	DEFAULT_MESSAGE_USERNAME      = ""
+	DEFAULT_MESSAGE_ASUSER        = false
+	DEFAULT_MESSAGE_PARSE         = ""
+	DEFAULT_MESSAGE_LINK_NAMES    = 0
+	DEFAULT_MESSAGE_UNFURL_LINKS  = false
+	DEFAULT_MESSAGE_UNFURL_MEDIA  = true
+	DEFAULT_MESSAGE_ICON_URL      = ""
+	DEFAULT_MESSAGE_ICON_EMOJI    = ""
+	DEFAULT_MESSAGE_MARKDOWN      = true
+	DEFAULT_MESSAGE_ESCAPE_TEXT   = true
+	DEFAULT_MESSAGE_RESPONSE_TYPE = "in_channel"
 )
 
 type chatResponseFull struct {
@@ -29,34 +30,36 @@ type chatResponseFull struct {
 
 // PostMessageParameters contains all the parameters necessary (including the optional ones) for a PostMessage() request
 type PostMessageParameters struct {
-	Text        string
-	Username    string
-	AsUser      bool
-	Parse       string
-	LinkNames   int
-	Attachments []Attachment
-	UnfurlLinks bool
-	UnfurlMedia bool
-	IconURL     string
-	IconEmoji   string
-	Markdown    bool `json:"mrkdwn,omitempty"`
-	EscapeText  bool
+	Text         string
+	Username     string
+	AsUser       bool
+	Parse        string
+	LinkNames    int
+	Attachments  []Attachment
+	UnfurlLinks  bool
+	UnfurlMedia  bool
+	IconURL      string
+	IconEmoji    string
+	Markdown     bool `json:"mrkdwn,omitempty"`
+	EscapeText   bool
+	ResponseType string
 }
 
 // NewPostMessageParameters provides an instance of PostMessageParameters with all the sane default values set
 func NewPostMessageParameters() PostMessageParameters {
 	return PostMessageParameters{
-		Username:    DEFAULT_MESSAGE_USERNAME,
-		AsUser:      DEFAULT_MESSAGE_ASUSER,
-		Parse:       DEFAULT_MESSAGE_PARSE,
-		LinkNames:   DEFAULT_MESSAGE_LINK_NAMES,
-		Attachments: nil,
-		UnfurlLinks: DEFAULT_MESSAGE_UNFURL_LINKS,
-		UnfurlMedia: DEFAULT_MESSAGE_UNFURL_MEDIA,
-		IconURL:     DEFAULT_MESSAGE_ICON_URL,
-		IconEmoji:   DEFAULT_MESSAGE_ICON_EMOJI,
-		Markdown:    DEFAULT_MESSAGE_MARKDOWN,
-		EscapeText:  DEFAULT_MESSAGE_ESCAPE_TEXT,
+		Username:     DEFAULT_MESSAGE_USERNAME,
+		AsUser:       DEFAULT_MESSAGE_ASUSER,
+		Parse:        DEFAULT_MESSAGE_PARSE,
+		LinkNames:    DEFAULT_MESSAGE_LINK_NAMES,
+		Attachments:  nil,
+		UnfurlLinks:  DEFAULT_MESSAGE_UNFURL_LINKS,
+		UnfurlMedia:  DEFAULT_MESSAGE_UNFURL_MEDIA,
+		IconURL:      DEFAULT_MESSAGE_ICON_URL,
+		IconEmoji:    DEFAULT_MESSAGE_ICON_EMOJI,
+		Markdown:     DEFAULT_MESSAGE_MARKDOWN,
+		EscapeText:   DEFAULT_MESSAGE_ESCAPE_TEXT,
+		ResponseType: DEFAULT_MESSAGE_RESPONSE_TYPE,
 	}
 }
 
@@ -136,6 +139,9 @@ func (api *Client) PostMessage(channel, text string, params PostMessageParameter
 	}
 	if params.Markdown != DEFAULT_MESSAGE_MARKDOWN {
 		values.Set("mrkdwn", "false")
+	}
+	if params.ResponseType != DEFAULT_MESSAGE_RESPONSE_TYPE {
+		values.Set("response_type", params.ResponseType)
 	}
 
 	response, err := chatRequest("chat.postMessage", values, api.debug)
